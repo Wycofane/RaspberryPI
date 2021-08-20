@@ -6,10 +6,10 @@ indexPage = Blueprint("index", __name__, template_folder="templates")
 
 @indexPage.route("/")
 def index():
-    email = session.get("email", "")
+    username = session.get("username", "")
 
-    if email:
-        if email and not email in sd.email and email != "":  # User is logged in and not the admin
+    if username:
+        if username and username != "":  # User is logged in and not the admin
             return redirect(url_for("profile.profile"))
 
 
