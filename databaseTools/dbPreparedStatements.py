@@ -56,3 +56,41 @@ def insertIntoUsers(connection, userid, password, username):
 
     connection.commit()
     dbcur.close()
+
+
+# function to add the alarm into the DB
+def insertIntoAlarms(connection, userid, alarmhour, alarmminute, repeatoption, alarmsound, daylist):
+    dbcur = connection.cursor()
+
+    if not daylist:
+        daylist = ""
+
+    dbcur.execute(
+        "INSERT INTO alarms (userID, alarmhour, alarmminute, repeatoption, alarmsound, active, daylist) VALUES ('" + userid + "','" + alarmhour + "','" + alarmminute + "','" + repeatoption + "','" + alarmsound + "','" + str(1) + "','" + daylist + "');")
+
+    connection.commit()
+    dbcur.close()
+
+
+def deleteAlarm(connection, userID, alarmid):
+    dbcur = connection.cursor()
+
+    dbcur.execute(
+        "DELETE FROM alarms where userID = " + "'" + userID + "'" + " and alarmid = " + "'" + alarmid + "'"
+    )
+
+    connection.commit()
+
+    dbcur.close()
+
+
+# static function to get the alarm by userID
+def getAlarms(connection, userid):
+    dbcur = connection.cursor()
+
+    dbcur.execute("SELECT * FROM alarms where userID = " + "'" + userid + "'")
+
+    record = dbcur.fetchall()
+    dbcur.close()
+
+    return record
