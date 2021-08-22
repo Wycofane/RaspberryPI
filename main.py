@@ -10,8 +10,12 @@ from sites.aboutus import aboutussite
 from sites.services import servicessite
 
 from sites.user.profile import profilesite
+from sites.user.clock import clocksite
+from sites.user.addAlarm import addAlarmsite
+
 from sites.tools.logout import logout
 from sites.tools.loginSystem import login
+
 
 from sites.indexPage import indexPage
 
@@ -32,6 +36,8 @@ app.register_blueprint(indexPage)
 app.register_blueprint(aboutussite)
 app.register_blueprint(servicessite)
 app.register_blueprint(profilesite)
+app.register_blueprint(clocksite)
+app.register_blueprint(addAlarmsite)
 app.register_blueprint(logout)
 
 
