@@ -40,7 +40,7 @@ def clock():
 
     if edit and alarmid:
 
-        optionsHour, optionsMinute, selected, alarmhour, alarmminute, repeatoption, repeat0, repeat1, repeat2, repeat3, daylist, monday, tuesday, wednesday, thursday, friday, saturday, sunday, active, switch = "", "", "", "", "", "", "", "", "", "", [], "", "", "", "", "", "", "", "", ""
+        optionsHour, optionsMinute, selected, alarmhour, alarmminute, repeatoption, repeat0, repeat1, repeat2, repeat3, daylist, monday, tuesday, wednesday, thursday, friday, saturday, sunday, active, switch, sound0, sound1, sound2, sound3, alarmsound = "", "", "", "", "", "", "", "", "", "", [], "", "", "", "", "", "", "", "", "", "", "", "", "", ""
 
         rows = databaseTools.dbPreparedStatements.getAlarm(connectionInnerscope, str(userid), str(alarmid))
 
@@ -135,8 +135,19 @@ def clock():
         if active == "1":
             switch = "checked"
 
+        if alarmsound == "0":
+            sound0 = "selected"
+        elif alarmsound == "1":
+            sound1 = "selected"
+        elif alarmsound == "2":
+            sound2 = "selected"
+        elif alarmsound == "3":
+            sound3 = "selected"
+
+
         return render_template("editAlarm.html", optionsHour=optionsHour, optionsMinute=optionsMinute, repeat0=repeat0,repeat1=repeat1, repeat2=repeat2, repeat3=repeat3,
-                               monday=monday, tuesday=tuesday, wednesday=wednesday, thursday=thursday, friday=friday, saturday=saturday, sunday=sunday, switch=switch)
+                               monday=monday, tuesday=tuesday, wednesday=wednesday, thursday=thursday, friday=friday, saturday=saturday, sunday=sunday, switch=switch,
+                               sound0=sound0, sound1=sound1, sound2=sound2, sound3=sound3)
 
     rows = databaseTools.dbPreparedStatements.getAlarms(connectionInnerscope, str(userid))
 
