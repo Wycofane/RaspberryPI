@@ -1,7 +1,5 @@
-from flask import Blueprint, render_template, session, redirect, request, abort, url_for
-import re
+from flask import Blueprint, render_template, session, redirect, request, abort
 import databaseTools.dbPreparedStatements
-
 
 database = databaseTools.MYSQL()
 
@@ -14,6 +12,7 @@ def clock():
     userid = session.get("userID", None)
 
     delete = request.args.get("delete", None)
+    edit = request.args.get("edit", None)
     alarmid = request.args.get("alarmid", None)
 
     modal = request.args.get("modal", None)
@@ -38,6 +37,106 @@ def clock():
         databaseTools.dbPreparedStatements.deleteAlarm(connectionInnerscope, userid, alarmid)
 
         return redirect("/clock")
+
+    if edit and alarmid:
+
+        optionsHour, optionsMinute, selected, alarmhour, alarmminute, repeatoption, repeat0, repeat1, repeat2, repeat3, daylist, monday, tuesday, wednesday, thursday, friday, saturday, sunday, active, switch = "", "", "", "", "", "", "", "", "", "", [], "", "", "", "", "", "", "", "", ""
+
+        rows = databaseTools.dbPreparedStatements.getAlarm(connectionInnerscope, str(userid), str(alarmid))
+
+        for row in rows:
+            alarmhour = str(row[2])
+            alarmminute = str(row[3])
+            repeatoption = str(row[4])
+            alarmsound = str(row[5])
+            active = str(row[6])
+            daylist = row[7]
+
+        for i in range(24):
+            calc = i / 10
+
+            if calc < 1:
+                hour = "0" + str(i)
+
+            else:
+                hour = str(i)
+
+            if hour == alarmhour:
+                selected = "selected"
+            else:
+                selected = ""
+
+            optionsHour = optionsHour + """
+                <option value=" """ + hour + """ " """ + selected + """>""" + hour + """</option>
+            """
+
+        for i in range(60):
+            calc = i / 10
+
+            if calc < 1:
+                minute = "0" + str(i)
+
+            else:
+                minute = str(i)
+
+            if minute == alarmminute:
+                selected = "selected"
+            else:
+                selected = ""
+
+            optionsMinute = optionsMinute + """
+                <option value=" """ + minute + """ " """ + selected + """>""" + minute + """</option>
+            """
+
+        if repeatoption == "0":
+            repeat0 = "selected"
+        elif repeatoption == "1":
+            repeat1 = "selected"
+        elif repeatoption == "2":
+            repeat2 = "selected"
+        elif repeatoption == "3":
+            repeat3 = "selected"
+
+            daylist = str(daylist).replace("[", "")
+            daylist = daylist.replace("]", "")
+            daylist = daylist.replace(",", "")
+
+            daylist = list(daylist.split(" "))
+
+            monday = daylist[0]
+            tuesday = daylist[1]
+            wednesday = daylist[2]
+            thursday = daylist[3]
+            friday = daylist[4]
+            saturday = daylist[5]
+            sunday = daylist[6]
+
+            if monday == "True":
+                monday = "checked"
+
+            if tuesday == "True":
+                tuesday = "checked"
+
+            if wednesday == "True":
+                wednesday = "checked"
+
+            if thursday == "True":
+                thursday = "checked"
+
+            if friday == "True":
+                friday = "checked"
+
+            if saturday == "True":
+                saturday = "checked"
+
+            if sunday == "True":
+                sunday = "checked"
+
+        if active == "1":
+            switch = "checked"
+
+        return render_template("editAlarm.html", optionsHour=optionsHour, optionsMinute=optionsMinute, repeat0=repeat0,repeat1=repeat1, repeat2=repeat2, repeat3=repeat3,
+                               monday=monday, tuesday=tuesday, wednesday=wednesday, thursday=thursday, friday=friday, saturday=saturday, sunday=sunday, switch=switch)
 
     rows = databaseTools.dbPreparedStatements.getAlarms(connectionInnerscope, str(userid))
 
@@ -74,7 +173,6 @@ def clock():
         else:
             print("alarmsound?")
             abort(500)
-
 
         if repeatoption == "0":
             repeatoption = "Just once"
@@ -133,7 +231,6 @@ def clock():
             print("repeatoption?")
             abort(500)
 
-
         alarms = alarms + """
         
             <div class="col-sm-3">
@@ -141,7 +238,7 @@ def clock():
                         <div class="card-header">
                             Alarm - """ + active + """
                             <div class="text-end">
-                                <a href="/clock?edit=True&alarmid=""" + alarmid + """"><i class="bi bi-trash"></i></a>
+                                <a href="/clock?edit=True&alarmid=""" + alarmid + """"><i class="bi bi-wrench"></i></a>
                                 <a href="/clock?delete=True&alarmid=""" + alarmid + """"><i class="bi bi-trash"></i></a>
                             </div>
                         </div>
@@ -154,11 +251,5 @@ def clock():
 			</div>
             
         """
-
-
-
-
-
-
 
     return render_template("clock.html", username=username, alarms=alarms, modaltext=modaltext)

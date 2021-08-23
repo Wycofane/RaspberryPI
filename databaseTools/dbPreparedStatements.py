@@ -94,3 +94,15 @@ def getAlarms(connection, userid):
     dbcur.close()
 
     return record
+
+
+# static function to get the alarm by userID and alarmID
+def getAlarm(connection, userid, alarmid):
+    dbcur = connection.cursor()
+
+    dbcur.execute("SELECT * FROM alarms where userID = " + "'" + userid + "' AND alarmid = " + "'" + alarmid + "'")
+
+    record = dbcur.fetchall()
+    dbcur.close()
+
+    return record
